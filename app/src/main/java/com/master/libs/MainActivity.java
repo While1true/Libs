@@ -3,6 +3,8 @@ package com.master.libs;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.master.rxlib.Rx.Net.RetrofitHttpManger;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

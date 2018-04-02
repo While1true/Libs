@@ -8,9 +8,7 @@ import com.master.rxlib.BuildConfig;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -52,23 +50,13 @@ public class RetrofitHttpManger {
         }
         return this;
     }
-
-    public static <T> T create(Class<T> service) {
-        return SingleHolder.manger.mRetrofit.create(service);
+    public Retrofit get() {
+        return mRetrofit;
     }
-
-    public static RetrofitHttpManger get() {
-        return SingleHolder.manger;
-    }
-
-    private static class SingleHolder {
-        private static RetrofitHttpManger manger = new Builder().Builder();
-    }
-
     public static class Builder {
         private int connectOut = 12;
         private int readOut = 12;
-        private String baseUrl;
+        private String baseUrl=BuildConfig.defaultUrl;
         private Retrofit mRetrofit;
         private File DownloadFILE = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         private Map<String, String> headers = new LinkedHashMap<>();
