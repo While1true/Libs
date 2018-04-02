@@ -32,33 +32,68 @@ public class RetrofitHttpManger {
     private static Map<String, File> progrssUrls = new LinkedHashMap<>();
     private File DownloadFILE = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
     private Retrofit mRetrofit;
+
     private RetrofitHttpManger() {
+    }
+
+    public RetrofitHttpManger addDownloadUrlListener(String url) {
+        progrssUrls.put(url, DownloadFILE);
+        return this;
+    }
+
+    public RetrofitHttpManger addDownloadUrlListener(String url, File file) {
+        progrssUrls.put(url, file);
+        return this;
+    }
+
+    public RetrofitHttpManger removeDownloadListener(String url) {
+        if (progrssUrls.containsKey(url)) {
+            progrssUrls.remove(url);
+        }
+        return this;
+    }
+
+    public static <T> T create(Class<T> service) {
+        return SingleHolder.manger.mRetrofit.create(service);
+    }
+
+    public static RetrofitHttpManger get() {
+        return SingleHolder.manger;
+    }
+
+    private static class SingleHolder {
+        private static RetrofitHttpManger manger = new Builder().Builder();
     }
 
     public static class Builder {
         private int connectOut = 12;
         private int readOut = 12;
-        private String baseUrl="http://10.0.110.134:8090/masterWeiBo/";
+        private String baseUrl;
         private Retrofit mRetrofit;
         private File DownloadFILE = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         private Map<String, String> headers = new LinkedHashMap<>();
+
         public Builder setTimeout(int connectOut, int readOut) {
             this.connectOut = connectOut;
             this.readOut = readOut;
             return this;
         }
+
         public Builder setBaseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
             return this;
         }
+
         public Builder setDownloadFile(File downloadFile) {
             this.baseUrl = baseUrl;
             return this;
         }
+
         public Builder addHeaders(String key, String value) {
-            headers.put(key,value);
+            headers.put(key, value);
             return this;
         }
+
         public RetrofitHttpManger Builder() {
             OkHttpClient httpclient = new OkHttpClient.Builder()
                     .connectTimeout(connectOut, TimeUnit.SECONDS)
@@ -68,7 +103,7 @@ public class RetrofitHttpManger {
                         public void log(String message) {
                             Log.i("HttpLoggingInterceptor", message);
                         }
-                    }).setLevel(BuildConfig.showlog?HttpLoggingInterceptor.Level.BODY:HttpLoggingInterceptor.Level.NONE))
+                    }).setLevel(BuildConfig.showlog ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE))
 
                     // 添加公共参数拦截器
                     // 添加通用的Header
@@ -90,7 +125,7 @@ public class RetrofitHttpManger {
                             String url = originalResponse.request().url().url().toString();
                             if (progrssUrls.containsKey(url)) {
                                 return originalResponse.newBuilder()
-                                        .body(new ProgressDownloadBody(originalResponse.body(),progrssUrls.get(url), url))
+                                        .body(new ProgressDownloadBody(originalResponse.body(), progrssUrls.get(url), url))
                                         .build();
                             } else {
                                 return originalResponse;
@@ -105,26 +140,10 @@ public class RetrofitHttpManger {
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .baseUrl(baseUrl)
                     .build();
-            retrofitHttpManger.DownloadFILE=DownloadFILE;
-            retrofitHttpManger.mRetrofit=mRetrofit;
+            retrofitHttpManger.DownloadFILE = DownloadFILE;
+            retrofitHttpManger.mRetrofit = mRetrofit;
             return retrofitHttpManger;
         }
-    }
-
-    public RetrofitHttpManger addDownloadUrlListener(String url){
-        progrssUrls.put(url,DownloadFILE);
-        return this;
-    }
-    public RetrofitHttpManger addDownloadUrlListener(String url,File file){
-        progrssUrls.put(url,file);
-        return this;
-    }
-    public static <T> T create(Class<T> service) {
-        return SingleHolder.manger.mRetrofit.create(service);
-    }
-
-    private static class SingleHolder {
-        private static RetrofitHttpManger manger = new Builder().Builder();
     }
 }
 
