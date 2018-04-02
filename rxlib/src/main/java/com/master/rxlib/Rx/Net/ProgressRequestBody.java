@@ -83,6 +83,10 @@ public final class ProgressRequestBody extends RequestBody {
                         callback.onProgress(progress);
                     }
                 }
+                if(contentLength==bytesWritten){
+                    callback.onNext(progress);
+                    callback.onComplete();
+                }
 
             }
         };
