@@ -28,7 +28,7 @@ fun removeAllCallBack() {
     list.clear()
 }
 
-fun Any?.Async(block: () -> Unit, delay: Int = 0) {
+fun Any?.Async(block: () -> Unit) {
     if (Thread.currentThread() != Looper.getMainLooper().thread) {
         block()
     } else {
