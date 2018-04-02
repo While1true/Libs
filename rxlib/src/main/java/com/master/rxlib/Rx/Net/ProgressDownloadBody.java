@@ -24,17 +24,10 @@ public class ProgressDownloadBody extends ResponseBody {
     private BufferedSource bufferedSource;
     private MyObserver.Progress progress;
 
-    public ProgressDownloadBody(ResponseBody responseBody,File file,
-                                String url) {
+    public ProgressDownloadBody(ResponseBody responseBody,String url) {
         this.responseBody = responseBody;
         progress = new MyObserver.Progress();
         progress.setUrl(url);
-        progress.setFile(getFileByUrl(file,url));
-    }
-    public static File getFileByUrl(File file,String url){
-        int index = url.lastIndexOf("/");
-        String name = url.substring(index);
-        return new File(file+name);
     }
     @Override
     public MediaType contentType() {

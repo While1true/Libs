@@ -1,15 +1,13 @@
 package com.master.rxlib.Rx.Net;
 
 
-import android.os.Environment;
 import android.util.Log;
 
-import com.master.rxlib.BuildConfig;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -28,25 +26,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitHttpManger {
-    private static Map<String, File> progrssUrls = new LinkedHashMap<>();
-    private File DownloadFILE = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+    private static List<String> progrssUrls = new ArrayList<>();
     private Retrofit mRetrofit;
 
     private RetrofitHttpManger() {
     }
 
     public RetrofitHttpManger addDownloadUrlListener(String url) {
-        progrssUrls.put(url, DownloadFILE);
-        return this;
-    }
-
-    public RetrofitHttpManger addDownloadUrlListener(String url, File file) {
-        progrssUrls.put(url, file);
+        if(!progrssUrls.contains(url))
+        progrssUrls.add(url);
         return this;
     }
 
     public RetrofitHttpManger removeDownloadListener(String url) {
-        if (progrssUrls.containsKey(url)) {
+        if (progrssUrls.contains(url)) {
             progrssUrls.remove(url);
         }
         return this;
@@ -63,7 +56,6 @@ public class RetrofitHttpManger {
         private Retrofit mRetrofit;
         private boolean showlog = true;
         OkHttpClient httpclient;
-        private File DownloadFILE = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         private Map<String, String> headers = new LinkedHashMap<>();
         private HttpsCerUtil.SSLParams sslParams;
 
@@ -77,12 +69,6 @@ public class RetrofitHttpManger {
             this.baseUrl = baseUrl;
             return this;
         }
-
-        public Builder setDownloadFile(File downloadFile) {
-            this.baseUrl = baseUrl;
-            return this;
-        }
-
         public Builder setShowlog(boolean showlog) {
             this.showlog = showlog;
             return this;
@@ -134,9 +120,9 @@ public class RetrofitHttpManger {
                             public Response intercept(Chain chain) throws IOException {
                                 Response originalResponse = chain.proceed(chain.request());
                                 String url = originalResponse.request().url().url().toString();
-                                if (progrssUrls.containsKey(url)) {
+                                if (progrssUrls.contains(url)) {
                                     return originalResponse.newBuilder()
-                                            .body(new ProgressDownloadBody(originalResponse.body(), progrssUrls.get(url), url))
+                                            .body(new ProgressDownloadBody(originalResponse.body(), url))
                                             .build();
                                 } else {
                                     return originalResponse;
@@ -155,7 +141,6 @@ public class RetrofitHttpManger {
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .baseUrl(baseUrl)
                     .build();
-            retrofitHttpManger.DownloadFILE = DownloadFILE;
             retrofitHttpManger.mRetrofit = mRetrofit;
             return retrofitHttpManger;
         }
