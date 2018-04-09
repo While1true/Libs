@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +28,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitHttpManger {
     private static List<String> progrssUrls = new ArrayList<>();
+    private static Map<Object, OkHttpClient> httpClients = new HashMap<>();
     private Retrofit mRetrofit;
 
     private RetrofitHttpManger() {
     }
 
     public RetrofitHttpManger addDownloadUrlListener(String url) {
-        if(!progrssUrls.contains(url))
-        progrssUrls.add(url);
+        if (!progrssUrls.contains(url))
+            progrssUrls.add(url);
         return this;
+    }
+
+    public OkHttpClient getClient(RetrofitHttpManger manger) {
+        return httpClients.get(manger);
     }
 
     public RetrofitHttpManger removeDownloadListener(String url) {
@@ -69,6 +75,7 @@ public class RetrofitHttpManger {
             this.baseUrl = baseUrl;
             return this;
         }
+
         public Builder setShowlog(boolean showlog) {
             this.showlog = showlog;
             return this;
@@ -141,6 +148,7 @@ public class RetrofitHttpManger {
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .baseUrl(baseUrl)
                     .build();
+            retrofitHttpManger.httpClients.put(retrofitHttpManger,httpclient);
             retrofitHttpManger.mRetrofit = mRetrofit;
             return retrofitHttpManger;
         }
