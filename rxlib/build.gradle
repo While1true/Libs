@@ -6,7 +6,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 14
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -17,13 +17,10 @@ android {
 
     buildTypes {
         release {
-            buildConfigField "String","defaultUrl","\"www.123.com/\""
-            buildConfigField "boolean","showlog","false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            buildConfigField "boolean","showlog","true"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
