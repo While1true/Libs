@@ -40,8 +40,8 @@ public class RetrofitHttpManger {
         return this;
     }
 
-    public OkHttpClient getClient(RetrofitHttpManger manger) {
-        return httpClients.get(manger);
+    public OkHttpClient getClient() {
+        return httpClients.get(this);
     }
 
     public RetrofitHttpManger removeDownloadListener(String url) {
