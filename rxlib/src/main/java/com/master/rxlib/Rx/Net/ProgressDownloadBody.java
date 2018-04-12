@@ -15,10 +15,6 @@ import okio.ForwardingSource;
 import okio.Okio;
 import okio.Source;
 
-/**
- * ResponseBody for download
- * Created by JokAr on 16/5/11.
- */
 public class ProgressDownloadBody extends ResponseBody {
     private ResponseBody responseBody;
     private BufferedSource bufferedSource;
